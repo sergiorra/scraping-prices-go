@@ -2,11 +2,12 @@ package booking
 
 import (
 	"fmt"
-	"github.com/gocolly/colly"
-	"github.com/gocolly/colly/extensions"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/gocolly/colly"
+	"github.com/gocolly/colly/extensions"
 )
 
 const (
@@ -37,14 +38,17 @@ func Scrap() {
 	c.Visit(getUrl())
 	c.Wait()
 
+	fmt.Printf("The minimum price is %d\n", getMinPrice(prices))
+}
+
+func getMinPrice(prices []int) int {
 	var minPrice int
 	for i, price := range prices {
 		if i==0 || price < minPrice {
 			minPrice = price
 		}
 	}
-	fmt.Println(prices)
-	fmt.Printf("The minimum price is %d\n", minPrice)
+	return minPrice
 }
 
 func getUrl() string {
