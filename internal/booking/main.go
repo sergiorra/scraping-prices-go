@@ -26,25 +26,25 @@ func Scrap() {
 	extensions.RandomUserAgent(c)
 
 	c.OnHTML(".hprt-price-block", func(e *colly.HTMLElement) {
-		price := e.ChildText("span.prco-valign-middle-helper")
-		price = strings.ReplaceAll(price, ",", "")
-		pr, err := strconv.Atoi(price[5:])
+		priceWithCurrency := e.ChildText("span.prco-valign-middle-helper")
+		priceWithCurrency = strings.ReplaceAll(priceWithCurrency, ",", "")
+		price, err := strconv.Atoi(priceWithCurrency[5:])
 		if err != nil {
 			fmt.Println(err)
 		}
-		prices = append(prices, pr)
+		prices = append(prices, price)
 	})
 
 	c.Visit(getUrl())
 	c.Wait()
 
-	fmt.Printf("The minimum price is %d\n", getMinPrice(prices))
+	fmt.Printf("The minimum price in Booking is %v\n", getMinPrice(prices))
 }
 
 func getMinPrice(prices []int) int {
 	var minPrice int
 	for i, price := range prices {
-		if i==0 || price < minPrice {
+		if i == 0 || price < minPrice {
 			minPrice = price
 		}
 	}
