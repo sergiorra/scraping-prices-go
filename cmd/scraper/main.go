@@ -1,15 +1,25 @@
 package main
 
 import (
-	"github.com/sergiorra/scraping-prices-go/internal/booking"
-	"github.com/sergiorra/scraping-prices-go/internal/pricetravel"
-	"github.com/sergiorra/scraping-prices-go/internal/trip"
+	"fmt"
+	"sync"
+
+	"github.com/sergiorra/scraping-prices-go/internal/companies/booking"
+	"github.com/sergiorra/scraping-prices-go/internal/companies/pricetravel"
+	"github.com/sergiorra/scraping-prices-go/internal/companies/trip"
 )
 
 func main() {
-	booking.Scrap()
-	pricetravel.Scrap()
-	trip.Scrap()
+	wg := sync.WaitGroup{}
+	wg.Add(3)
+
+	go booking.Scrap(&wg)
+	go pricetravel.Scrap(&wg)
+	go trip.Scrap(&wg)
+
+	wg.Wait()
+
+	fmt.Println("Done!")
 }
 
 

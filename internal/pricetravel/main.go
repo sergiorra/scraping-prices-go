@@ -1,4 +1,0 @@
-package pricetravel
-
-func Scrap() {
-}

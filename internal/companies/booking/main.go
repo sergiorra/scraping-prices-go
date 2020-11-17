@@ -5,6 +5,9 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
+
+	"github.com/sergiorra/scraping-prices-go/internal/shared/price"
 
 	"github.com/gocolly/colly"
 	"github.com/gocolly/colly/extensions"
@@ -14,7 +17,7 @@ const (
 	URL = "https://www.booking.com/hotel/no/spitsbergen.en-gb.html"
 )
 
-func Scrap() {
+func Scrap(wg *sync.WaitGroup) {
 
 	var prices []int
 
@@ -35,20 +38,15 @@ func Scrap() {
 		prices = append(prices, price)
 	})
 
+	c.OnRequest(func(r *colly.Request) {
+		fmt.Println("Visiting", r.URL.String())
+	})
+
 	c.Visit(getUrl())
 	c.Wait()
 
-	fmt.Printf("The minimum price in Booking is %v\n", getMinPrice(prices))
-}
-
-func getMinPrice(prices []int) int {
-	var minPrice int
-	for i, price := range prices {
-		if i == 0 || price < minPrice {
-			minPrice = price
-		}
-	}
-	return minPrice
+	fmt.Printf("The minimum price in Booking is %v\n", price.GetMinPrice(prices))
+	wg.Done()
 }
 
 func getUrl() string {
